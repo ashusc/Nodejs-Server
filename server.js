@@ -1,22 +1,24 @@
-
-
+/*
+@Author: Ashutosh Mishra
+@Desc: Simple Node Server to serve some REST API, and some file uploading to this server.
+*/
 var port 		= process.env.PORT || 10000; // set the port
 var path 		= require('path');
-var express 	= require('express');
+var express 		= require('express');
 var app 		= express();
 
 /*To call an REST API [in-case]*/
 var request 		= require('request');
 
 /*Middle-ware [in-case]*/
-var multer 		    = require("multer");
-var fs 			    = require('fs');
-var util 		    = require('util');
+var multer 		= require("multer");
+var fs 			= require('fs');
+var util 		= require('util');
 var bodyParser 		= require('body-parser');
 var cookieParser	= require('cookie-parser');
 var session 		= require('express-session');
 
-/*Setting up*/
+/*Setting up [Old configuration style.]*/
 	app.configure(function() {
 	    app.use(express.static(__dirname + '/_public'));
 	    app.use(express.cookieParser());
@@ -25,7 +27,6 @@ var session 		= require('express-session');
 	    app.use(express.bodyParser({uploadDir:'./uploads'}));
 	    app.use(bodyParser.urlencoded({
 		extended: true
-
 	    }));
 	    app.use(express.methodOverride());
 	});
@@ -36,32 +37,40 @@ var session 		= require('express-session');
 	console.log("\n[1] - Server listening on port " + port + "... [http://localhost:"+port+"/]");
 
 //printing REquest url.
-app.use(function(req, res, next){
-	console.log("\n >>>>>", req.url);
-	next();
-});
+	app.use(function(req, res, next){
+		console.log("\n Requested URL >>>>>", req.url);
+		next(); /* Proceed to next job if any. [move execution point.]*/
+	});
+	
 //=========================================================================================
-app.post("/eko/file/", function(req, res){
-	console.log(req);
-	res.status(200).send("POST Done");
-});
-app.get("/eko/file/", function(req, res){
-	console.log(req);
-	res.status(200).send("GET Done");
-});
+	/*File Object Recieving here.*/
+	/*POST Method*/
+	app.post("/eko/file/", function(req, res){
+		console.log(req);
+		//File will stored on temporary location of operating system by default.
+		//Code to save file to wanted location.
+		res.status(200).send("POST Done");
+	});
+	
+	/*GET Method*/
+	app.get("/eko/file/", function(req, res){
+		console.log(req);
+		//Some GET Request processing.
+		res.status(200).send("GET Done");
+	});
+	
+	/*GET Method: Sending json data file*/
+	app.get("/eko/v1/chartData", function(req, res){
+		console.log("\n >>>>>", req.url);
+		res.status(200).sendfile('./data.json');
+	});
+	
+	//REST API for getting Sample JSON data for google chart.
+	app.get("/eko/v1/chart", sendJSONData);
 
 //======================================================================================
-//json data file
-app.get("/eko/v1/chartData", function(req, res){
-	console.log("\n >>>>>", req.url);
-	res.status(200).sendfile('./data.json');
-});
-
-//REST API for get
-app.get("/eko/v1/chart", sendJSONData);
 
 function sendJSONData(req, res){
-
 	//making data for an API request
 	var arrData = [
 		{
@@ -182,8 +191,8 @@ function sendJSONData(req, res){
 
  		}
 	];
-
+	//Console out a log.
 	console.log("\n Sending JSON Data\n");
-	//res.status(200).send(JSON.stringify(obj));
+	//Finally sending after stringify json data.
 	res.status(200).send(JSON.stringify(arrData));
 }
