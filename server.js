@@ -42,14 +42,48 @@ var session 		= require('express-session');
 		next(); /* Proceed to next job if any. [move execution point.]*/
 	});
 	
+/* Main Code */
 //=========================================================================================
-	/*File Object Recieving here.*/
+	/*File Object Recieving here. [Sample]*/
 	/*POST Method*/
 	app.post("/eko/file/", function(req, res){
 		console.log(req);
 		//File will stored on temporary location of operating system by default.
 		//Code to save file to wanted location.
 		res.status(200).send("POST Done");
+	});
+	
+	/* File Upload Section. [Full-working Code]*/
+	app.post('/upload-file',  function(req, res){
+		//'file' is expected under req.files object.
+		if(req.files.file !== undefined){
+			/* 
+			Reading and copying file. 
+			[File saving location will be: "app.use(express.bodyParser({uploadDir:'./uploads'}));"]
+			*/
+			
+			fs.readFile(req.files.file.path,  (err, data) => {
+				if (err) throw err;
+				fs.writeFile(destinaion_path+req.files.file.name, data, (err) => {
+				    if (err) throw err;
+				    console.log(' File Written Successfully. \n');
+				    res.send('<center><h4><hr/><font face="calibri" color="darkred"> File Uploaded Successfully. !!! </font><hr/></h4>');
+				});
+			});
+	
+			/*Removing files from temp location*/
+			 fs.unlink(req.files.file.path);
+		}/*End of if*/
+		else{
+			res.status(404).send("Oops!!! File Not Received. Something went wrong.");
+			//res.send("Oops!!! File Not Received. Something went wrong.");
+			/*Checking Log for Error*/
+			console.log(" Following Log>>>>>>\n ");
+			console.log("--[REQ OBJ]---------------------------------------------------");
+			console.log(req);
+			console.log("----------------------------------------------------[END]-----");
+	
+		}
 	});
 	
 	/*GET Method*/
