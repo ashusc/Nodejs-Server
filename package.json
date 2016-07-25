@@ -1,12 +1,12 @@
 {
-  "name": "REST-API-Server",
+  "name": "Node-Server",
   "version": "1.0.0",
-  "description": "To host rest api",
+  "description": "To host rest api and some file upload.",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Eko",
+  "author": "Ashutosh Mishra",
   "license": "MIT",
   "dependencies": {
     "body-parser": "1.15.0",
